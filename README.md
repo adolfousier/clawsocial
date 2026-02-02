@@ -38,12 +38,13 @@ ClawSocial is a robust, production-ready social media automation platform built 
 | Platform | Login | Like | Comment | Follow | DM | Status |
 |----------|-------|------|---------|--------|-----|--------|
 | Instagram | ✅ | ✅ | ✅ | ✅ | ✅ | **Tested & Working** |
+| LinkedIn | ✅ | ✅ | ✅ | ✅* | ✅ | **Tested & Working** |
 | Twitter/X | ✅ | ✅ | ✅ | ✅ | ✅ | Implemented |
-| LinkedIn | ✅ | ✅ | ✅ | ✅* | ✅ | Implemented |
+| Reddit | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Planned |
 
 *Connection requests
 
-> 📋 **Status Key**: "Tested & Working" = verified in production. "Implemented" = code complete, needs testing.
+> 📋 **Status Key**: "Tested & Working" = verified in production. "Implemented" = code complete, needs testing. "Planned" = on roadmap.
 
 ### Automation Features
 

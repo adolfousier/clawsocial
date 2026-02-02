@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-02-02
+
+### Fixed
+- **LinkedIn login**: Fixed `isLoggedIn()` false positive that caused session to be saved without auth cookie
+- **LinkedIn MFA**: No longer navigates away during MFA approval flow
+- **LinkedIn session**: Now correctly checks for `li_at` auth cookie
+
+### Changed
+- LinkedIn status upgraded to "Tested & Working"
+- Added Reddit to roadmap (Planned)
+
+### Tested
+- Instagram: Login, DM, Like, Comment ✅
+- LinkedIn: Login, Like ✅
+
 ## [0.1.0] - 2026-02-02
 
 ### Added
