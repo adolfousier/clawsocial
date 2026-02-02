@@ -5,26 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2026-02-02
+## [Unreleased]
+
+## [0.1.0] - 2026-02-02
 
 ### Added
 
 - Initial release of ClawSocial
-- **Instagram Support**
+- **Instagram Support** ✅ Tested
+  - Headless login with credentials
   - Like posts
   - Comment on posts
   - Follow/unfollow users
-  - Send direct messages
-  - View stories
+  - Send direct messages ✅ Verified working
   - Profile scraping
-- **Twitter/X Support**
+- **Twitter/X Support** (Implemented, not yet tested)
   - Like tweets
   - Post tweets
   - Reply to tweets
   - Follow/unfollow users
   - Send direct messages
   - Retweet
-- **LinkedIn Support**
+- **LinkedIn Support** (Implemented, not yet tested)
   - View profiles
   - Send connection requests
   - Send messages
@@ -39,7 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - WebSocket real-time control
   - CLI interface
   - Activity logging
-  - Multi-account support
 - **Infrastructure**
   - Docker support
   - TypeScript codebase

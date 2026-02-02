@@ -11,8 +11,6 @@
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [API](#api) • [Configuration](#configuration)
 
-> ✅ **Tested & Working**: Instagram login, DM, like, comment, follow (Feb 2026)
-
 
 
 </div>
@@ -37,13 +35,15 @@ ClawSocial is a robust, production-ready social media automation platform built 
 
 ### Platforms
 
-| Platform | Like | Comment | Follow | DM | Post | Scrape |
-|----------|------|---------|--------|-----|------|--------|
-| Instagram | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Twitter/X | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| LinkedIn | ✅ | ✅ | ✅* | ✅ | ❌ | ✅ |
+| Platform | Login | Like | Comment | Follow | DM | Status |
+|----------|-------|------|---------|--------|-----|--------|
+| Instagram | ✅ | ✅ | ✅ | ✅ | ✅ | **Tested & Working** |
+| Twitter/X | ✅ | ✅ | ✅ | ✅ | ✅ | Implemented |
+| LinkedIn | ✅ | ✅ | ✅ | ✅* | ✅ | Implemented |
 
 *Connection requests
+
+> 📋 **Status Key**: "Tested & Working" = verified in production. "Implemented" = code complete, needs testing.
 
 ### Automation Features
 
