@@ -17,6 +17,75 @@
 
 ---
 
+## 🤖 Agent Instructions (OpenClaw/AI)
+
+> **If you're an AI agent reading this**, here's how to use ClawSocial:
+
+### Quick Commands
+
+```bash
+# Login (headless - uses .env credentials)
+npm run cli -- session login <platform> --headless
+
+# Check session status
+npm run cli -- session status
+
+# Instagram actions
+npm run cli -- ig like <post-url>
+npm run cli -- ig comment <post-url> "Your comment"
+npm run cli -- ig dm <username> "Your message"
+npm run cli -- ig follow <username>
+
+# LinkedIn actions
+npm run cli -- linkedin like <post-url>
+npm run cli -- linkedin comment <post-url> "Your comment"
+npm run cli -- linkedin dm <profile-url> "Your message"
+npm run cli -- linkedin connect <profile-url>
+```
+
+### Human-like Behavior (Built-in)
+
+ClawSocial automatically simulates human behavior:
+- **Warm-up browsing**: Scrolls feed 3-5 times before any action
+- **Random delays**: 1.5-4s between actions
+- **Natural typing**: 30-100ms per character
+- **Thinking pauses**: 2-5s before complex actions
+
+### Multi-Action Sequences
+
+When performing multiple actions (e.g., DM then comment), use `actionCooldown()`:
+- Default: 2-3 minute wait between actions
+- This is handled automatically for same-session actions
+
+### Rate Limits (Per Day)
+
+| Platform | Like | Comment | Follow | DM |
+|----------|------|---------|--------|-----|
+| Instagram | 100 | 30 | 50 | 50 |
+| LinkedIn | 100 | 30 | 15* | 40 |
+
+*Connection requests
+
+### Required Environment Variables
+
+```bash
+# Instagram
+INSTAGRAM_USERNAME=your_username
+INSTAGRAM_PASSWORD="your_password"
+
+# LinkedIn (supports MFA - approve in app when prompted)
+LINKEDIN_EMAIL=your_email
+LINKEDIN_PASSWORD="your_password"
+```
+
+### Session Files
+
+- Sessions stored in `./sessions/{platform}.json`
+- Browser data in `./browser-data/`
+- Debug screenshots in `./sessions/debug-*.png`
+
+---
+
 ## Overview
 
 ClawSocial is a robust, production-ready social media automation platform built with Playwright. It simulates human-like behavior to interact with Instagram, Twitter/X, and LinkedIn safely and efficiently.
@@ -48,9 +117,14 @@ ClawSocial is a robust, production-ready social media automation platform built 
 
 ### Automation Features
 
-- **Human Simulation**: Randomized delays (1.5-4s), natural typing (30-100ms/char)
+- **Human Simulation**: 
+  - Warm-up browsing (scrolls feed before actions)
+  - Randomized delays (1.5-4s between actions)
+  - Natural typing (30-100ms per character)
+  - Thinking pauses (2-5s before complex actions)
+  - Action cooldown (2-3 min between multiple actions)
 - **Rate Limiting**: Configurable daily limits per action type
-- **Session Management**: Encrypted cookie storage, auto-restore sessions
+- **Session Management**: Cookie storage, auto-restore sessions
 - **Stealth Mode**: Browser fingerprint protection, anti-bot detection
 - **Error Recovery**: Automatic retries with exponential backoff
 - **Logging**: Structured logging with Winston

@@ -1,5 +1,5 @@
 import type { Page } from 'playwright';
-import { log as _log } from '../utils/logger.js';
+import { log } from '../utils/logger.js';
 import {
   humanDelay,
   quickDelay,
@@ -247,6 +247,51 @@ export abstract class BasePlatformHandler {
    */
   protected async delay(): Promise<void> {
     await humanDelay();
+  }
+
+  /**
+   * Warm-up behavior: scroll feed, pause to "read", simulate natural browsing
+   * Call this before performing any action on Instagram/LinkedIn
+   */
+  protected async warmUp(options: {
+    scrollCount?: number;
+    minPauseMs?: number;
+    maxPauseMs?: number;
+  } = {}): Promise<void> {
+    const {
+      scrollCount = 3 + Math.floor(Math.random() * 3), // 3-5 scrolls
+      minPauseMs = 2000,
+      maxPauseMs = 5000,
+    } = options;
+
+    const page = await this.getPage();
+    log.info('Starting warm-up browsing behavior...');
+
+    for (let i = 0; i < scrollCount; i++) {
+      // Random scroll amount
+      const scrollAmount = 200 + Math.floor(Math.random() * 400);
+      await page.mouse.wheel(0, scrollAmount);
+      
+      // Random pause to "read" content
+      const pauseTime = minPauseMs + Math.floor(Math.random() * (maxPauseMs - minPauseMs));
+      await sleep(pauseTime);
+      
+      log.debug(`Warm-up scroll ${i + 1}/${scrollCount}, paused ${pauseTime}ms`);
+    }
+
+    // Final pause before action
+    await this.think();
+    log.info('Warm-up complete');
+  }
+
+  /**
+   * Wait between actions (for multi-action sequences)
+   * Use this between DM and comment, etc.
+   */
+  protected async actionCooldown(minMs: number = 120000, maxMs: number = 180000): Promise<void> {
+    const waitTime = minMs + Math.floor(Math.random() * (maxMs - minMs));
+    log.info(`Action cooldown: waiting ${Math.round(waitTime / 1000)}s before next action...`);
+    await sleep(waitTime);
   }
 
   // Abstract methods that must be implemented by each platform

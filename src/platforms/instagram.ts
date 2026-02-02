@@ -421,7 +421,11 @@ export class InstagramHandler extends BasePlatformHandler {
     try {
       log.info('Liking Instagram post', { url: payload.url });
 
-      // Navigate to post
+      // Navigate to home first for warm-up browsing
+      await this.navigate(`${this.baseUrl}/`);
+      await this.warmUp({ scrollCount: 2 + Math.floor(Math.random() * 2) });
+
+      // Now navigate to post
       await this.navigate(payload.url);
       await this.think();
 
@@ -467,7 +471,11 @@ export class InstagramHandler extends BasePlatformHandler {
     try {
       log.info('Commenting on Instagram post', { url: payload.url });
 
-      // Navigate to post
+      // Navigate to home first for warm-up browsing
+      await this.navigate(`${this.baseUrl}/`);
+      await this.warmUp({ scrollCount: 2 + Math.floor(Math.random() * 2) });
+
+      // Now navigate to post
       await this.navigate(payload.url);
       await this.think();
 
@@ -616,7 +624,11 @@ export class InstagramHandler extends BasePlatformHandler {
     try {
       log.info('Sending Instagram DM', { username: payload.username });
 
-      // Navigate to user profile first
+      // Navigate to home first for warm-up browsing
+      await this.navigate(`${this.baseUrl}/`);
+      await this.warmUp({ scrollCount: 3 + Math.floor(Math.random() * 2) });
+
+      // Navigate to user profile
       const profileUrl = `${this.baseUrl}/${payload.username}/`;
       await this.navigate(profileUrl);
       await this.think();

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-02-02
+
+### Added
+- **Warm-up browsing**: Instagram & LinkedIn now scroll feed 3-5 times before any action
+- **Action cooldown**: 2-3 minute delay method for multi-action sequences
+- **Agent-friendly README**: Added "Agent Instructions" section for OpenClaw/AI usage
+
+### Changed
+- Human simulation now includes pre-action warm-up for all Instagram/LinkedIn actions
+- README restructured with quick commands for AI agents
+
 ## [0.1.1] - 2026-02-02
 
 ### Fixed

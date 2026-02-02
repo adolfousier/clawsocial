@@ -302,6 +302,11 @@ export class LinkedInHandler extends BasePlatformHandler {
     try {
       log.info('Liking LinkedIn post', { url: payload.url });
 
+      // Navigate to feed first for warm-up browsing
+      await this.navigate(`${this.baseUrl}/feed/`);
+      await this.warmUp({ scrollCount: 3 + Math.floor(Math.random() * 3) });
+
+      // Now navigate to post
       await this.navigate(payload.url);
       await this.think();
 
@@ -341,6 +346,11 @@ export class LinkedInHandler extends BasePlatformHandler {
     try {
       log.info('Commenting on LinkedIn post', { url: payload.url });
 
+      // Navigate to feed first for warm-up browsing
+      await this.navigate(`${this.baseUrl}/feed/`);
+      await this.warmUp({ scrollCount: 3 + Math.floor(Math.random() * 3) });
+
+      // Now navigate to post
       await this.navigate(payload.url);
       await this.think();
 
@@ -536,6 +546,11 @@ export class LinkedInHandler extends BasePlatformHandler {
     try {
       log.info('Sending LinkedIn message', { username: payload.username });
 
+      // Navigate to feed first for warm-up browsing
+      await this.navigate(`${this.baseUrl}/feed/`);
+      await this.warmUp({ scrollCount: 3 + Math.floor(Math.random() * 3) });
+
+      // Navigate to profile
       const profileUrl = payload.username.startsWith('http')
         ? payload.username
         : `${this.baseUrl}/in/${payload.username}/`;
