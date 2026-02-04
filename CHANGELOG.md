@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.33] - 2026-02-04
+
+### Fixed
+- **LinkedIn Connect modal handling**: Fixed "Send without a note?" confirmation dialog blocking connection requests
+- **3rd degree connections**: Connect via More dropdown now properly handles LinkedIn's confirmation modal
+- **Direct Connect**: Added modal detection for standard Connect button flow
+
+### Changed
+- LinkedIn connect now checks for and clicks confirmation buttons after initiating connection request
+- Improved logging for modal detection flow
+
 ## [0.0.32] - 2026-02-04
 
 ### Added

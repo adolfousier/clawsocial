@@ -617,19 +617,42 @@ export class LinkedInHandler extends BasePlatformHandler {
           await dropdownConnect.click();
           await this.pause();
           
-          // Handle connection modal (add note if provided)
-          if (payload.note && await this.elementExists(SELECTORS.addNoteButton)) {
-            await this.clickHuman(SELECTORS.addNoteButton);
-            await this.pause();
-            if (await this.waitForElement(SELECTORS.noteInput, 5000)) {
-              await page.fill(SELECTORS.noteInput, payload.note);
-              await this.pause();
-            }
-          }
+          // Handle "How do you know..." modal or send without note
+          // First check for "Send without a note" / "Send now" confirmation dialog
+          const sendWithoutNoteBtn = page.locator('button[aria-label*="Send without"], button[aria-label*="Send now"], button:has-text("Send without a note"), button:has-text("Send now")').first();
+          const hasSendWithoutNote = await sendWithoutNoteBtn.isVisible().catch(() => false);
           
-          // Send connection request
-          if (await this.elementExists(SELECTORS.sendButton)) {
-            await this.clickHuman(SELECTORS.sendButton);
+          if (hasSendWithoutNote) {
+            log.info('Found "Send without note" confirmation - clicking...');
+            await sendWithoutNoteBtn.click();
+            await this.pause();
+          } else {
+            // Handle connection modal (add note if provided)
+            if (payload.note && await this.elementExists(SELECTORS.addNoteButton)) {
+              await this.clickHuman(SELECTORS.addNoteButton);
+              await this.pause();
+              if (await this.waitForElement(SELECTORS.noteInput, 5000)) {
+                await page.fill(SELECTORS.noteInput, payload.note);
+                await this.pause();
+              }
+            }
+            
+            // Send connection request - try multiple selectors
+            const sendBtn = page.locator('button[aria-label*="Send"]:visible, button:has-text("Send"):visible').first();
+            const hasSendBtn = await sendBtn.isVisible().catch(() => false);
+            if (hasSendBtn) {
+              await sendBtn.click();
+              await this.pause();
+              
+              // Check if another confirmation modal appears after clicking Send
+              const confirmBtn = page.locator('button[aria-label*="Send without"], button[aria-label*="Send now"], button:has-text("Send without a note"), button:has-text("Send now")').first();
+              const hasConfirm = await confirmBtn.isVisible().catch(() => false);
+              if (hasConfirm) {
+                log.info('Secondary confirmation modal - clicking...');
+                await confirmBtn.click();
+                await this.pause();
+              }
+            }
           }
           
           await this.delay();
@@ -680,20 +703,42 @@ export class LinkedInHandler extends BasePlatformHandler {
         await mainConnectButton.click();
         await this.pause();
 
-        // Add note if provided
-        if (payload.note && await this.elementExists(SELECTORS.addNoteButton)) {
-          await this.clickHuman(SELECTORS.addNoteButton);
+        // Handle "Send without a note" confirmation if it appears immediately
+        const sendWithoutNoteBtn = page.locator('button[aria-label*="Send without"], button[aria-label*="Send now"], button:has-text("Send without a note"), button:has-text("Send now")').first();
+        const hasSendWithoutNote = await sendWithoutNoteBtn.isVisible().catch(() => false);
+        
+        if (hasSendWithoutNote) {
+          log.info('Found "Send without note" confirmation - clicking...');
+          await sendWithoutNoteBtn.click();
           await this.pause();
-
-          if (await this.waitForElement(SELECTORS.noteInput, 5000)) {
-            await page.fill(SELECTORS.noteInput, payload.note);
+        } else {
+          // Add note if provided
+          if (payload.note && await this.elementExists(SELECTORS.addNoteButton)) {
+            await this.clickHuman(SELECTORS.addNoteButton);
             await this.pause();
-          }
-        }
 
-        // Send connection request
-        if (await this.elementExists(SELECTORS.sendButton)) {
-          await this.clickHuman(SELECTORS.sendButton);
+            if (await this.waitForElement(SELECTORS.noteInput, 5000)) {
+              await page.fill(SELECTORS.noteInput, payload.note);
+              await this.pause();
+            }
+          }
+
+          // Send connection request - try multiple selectors
+          const sendBtn = page.locator('button[aria-label*="Send"]:visible, button:has-text("Send"):visible').first();
+          const hasSendBtn = await sendBtn.isVisible().catch(() => false);
+          if (hasSendBtn) {
+            await sendBtn.click();
+            await this.pause();
+            
+            // Check if another confirmation modal appears after clicking Send
+            const confirmBtn = page.locator('button[aria-label*="Send without"], button[aria-label*="Send now"], button:has-text("Send without a note"), button:has-text("Send now")').first();
+            const hasConfirm = await confirmBtn.isVisible().catch(() => false);
+            if (hasConfirm) {
+              log.info('Secondary confirmation modal - clicking...');
+              await confirmBtn.click();
+              await this.pause();
+            }
+          }
         }
 
         await this.delay();
