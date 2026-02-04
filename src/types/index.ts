@@ -30,6 +30,7 @@ export interface ClawSocialConfig {
   delays?: Partial<DelayConfig>;
   session?: Partial<SessionConfig>;
   logging?: Partial<LoggingConfig>;
+  notifications?: Partial<NotificationConfig>;
 }
 
 export interface ServerConfig {
@@ -81,6 +82,64 @@ export interface SessionConfig {
 export interface LoggingConfig {
   level: 'debug' | 'info' | 'warn' | 'error';
   file?: string;
+}
+
+// ============================================================================
+// Notification Types
+// ============================================================================
+
+export type NotificationChannel = 'telegram' | 'discord' | 'webhook';
+
+export type NotificationEvent = 
+  | 'action:complete'
+  | 'action:error'
+  | 'session:login'
+  | 'ratelimit:exceeded';
+
+export interface TelegramChannelConfig {
+  botToken: string;
+  chatId: string;
+}
+
+export interface DiscordChannelConfig {
+  webhookUrl: string;
+}
+
+export interface WebhookChannelConfig {
+  url: string;
+  method?: 'POST' | 'PUT';
+  headers?: Record<string, string>;
+}
+
+export interface NotificationChannels {
+  telegram?: TelegramChannelConfig;
+  discord?: DiscordChannelConfig;
+  webhook?: WebhookChannelConfig;
+}
+
+export interface NotificationEventConfig {
+  'action:complete': boolean;
+  'action:error': boolean;
+  'session:login': boolean;
+  'ratelimit:exceeded': boolean;
+}
+
+export interface NotificationConfig {
+  enabled: boolean;
+  channels: NotificationChannels;
+  events: NotificationEventConfig;
+  brandFooter?: string;
+}
+
+export interface NotificationPayload {
+  event: NotificationEvent;
+  platform: Platform;
+  action: ActionType;
+  success: boolean;
+  target?: string;
+  details?: Record<string, unknown>;
+  error?: string;
+  timestamp: number;
 }
 
 // ============================================================================

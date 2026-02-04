@@ -9,6 +9,7 @@ import {
   thinkingPause,
   sleep,
 } from '../utils/delays.js';
+import { getNotifier } from '../services/notifier.js';
 import type { BrowserManager } from '../browser/manager.js';
 import type { RateLimiter } from '../utils/rate-limiter.js';
 import type {
@@ -20,6 +21,7 @@ import type {
   FollowPayload,
   DMPayload,
   RateLimitStatus,
+  NotificationPayload,
 } from '../types/index.js';
 
 export abstract class BasePlatformHandler {
@@ -73,15 +75,16 @@ export abstract class BasePlatformHandler {
   }
 
   /**
-   * Create a successful action result
+   * Create a successful action result and send notification
    */
   protected createResult(
     action: ActionType,
     target: string,
     startTime: number,
-    rateLimit?: RateLimitStatus
+    rateLimit?: RateLimitStatus,
+    details?: Record<string, unknown>
   ): ActionResult {
-    return {
+    const result: ActionResult = {
       success: true,
       platform: this.platform,
       action,
@@ -90,10 +93,15 @@ export abstract class BasePlatformHandler {
       duration: Date.now() - startTime,
       rateLimit,
     };
+    
+    // Send notification asynchronously (don't await)
+    this.sendNotification('action:complete', result, details);
+    
+    return result;
   }
 
   /**
-   * Create a failed action result
+   * Create a failed action result and send notification
    */
   protected createErrorResult(
     action: ActionType,
@@ -102,7 +110,7 @@ export abstract class BasePlatformHandler {
     startTime: number,
     rateLimit?: RateLimitStatus
   ): ActionResult {
-    return {
+    const result: ActionResult = {
       success: false,
       platform: this.platform,
       action,
@@ -112,6 +120,40 @@ export abstract class BasePlatformHandler {
       duration: Date.now() - startTime,
       rateLimit,
     };
+    
+    // Send notification asynchronously (don't await)
+    this.sendNotification('action:error', result);
+    
+    return result;
+  }
+
+  /**
+   * Send notification for action result
+   */
+  protected async sendNotification(
+    event: 'action:complete' | 'action:error',
+    result: ActionResult,
+    details?: Record<string, unknown>
+  ): Promise<void> {
+    try {
+      const notifier = getNotifier();
+      if (!notifier) return;
+      
+      const payload: NotificationPayload = {
+        event,
+        platform: result.platform,
+        action: result.action,
+        success: result.success,
+        target: result.target,
+        error: result.error,
+        details,
+        timestamp: result.timestamp,
+      };
+      
+      await notifier.notify(payload);
+    } catch (err) {
+      log.debug('Notification send failed', { error: String(err) });
+    }
   }
 
   /**

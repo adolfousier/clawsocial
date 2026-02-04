@@ -8,7 +8,8 @@ import { WebSocketManager } from './server/websocket.js';
 import { initLogger, log } from './utils/logger.js';
 import { configureDelays } from './utils/delays.js';
 import { loadConfig } from './utils/config.js';
-import type { ClawSocialConfig, Platform, RateLimitStatus, ServerConfig, BrowserConfig, RateLimitConfig, DelayConfig, SessionConfig, LoggingConfig } from './types/index.js';
+import { Notifier, initNotifier } from './services/notifier.js';
+import type { ClawSocialConfig, Platform, RateLimitStatus, ServerConfig, BrowserConfig, RateLimitConfig, DelayConfig, SessionConfig, LoggingConfig, NotificationConfig } from './types/index.js';
 
 interface ResolvedConfig {
   server: ServerConfig;
@@ -17,6 +18,7 @@ interface ResolvedConfig {
   delays: DelayConfig;
   session: SessionConfig;
   logging: LoggingConfig;
+  notifications: NotificationConfig;
 }
 import type { Server } from 'http';
 
@@ -26,6 +28,7 @@ export class ClawSocial {
   private rateLimiter: RateLimiter;
   private httpServer: Server | null = null;
   private wsManager: WebSocketManager | null = null;
+  private _notifier: Notifier;
 
   public instagram: InstagramHandler;
   public twitter: TwitterHandler;
@@ -45,10 +48,19 @@ export class ClawSocial {
       delays: { ...defaultConfig.delays, ...config?.delays },
       session: { ...defaultConfig.session, ...config?.session },
       logging: { ...defaultConfig.logging, ...config?.logging },
+      notifications: {
+        ...defaultConfig.notifications,
+        ...config?.notifications,
+        channels: { ...defaultConfig.notifications.channels, ...config?.notifications?.channels },
+        events: { ...defaultConfig.notifications.events, ...config?.notifications?.events },
+      },
     };
 
     // Initialize logger
     initLogger(this.config.logging.level, this.config.logging.file);
+
+    // Initialize notifier
+    this._notifier = initNotifier(this.config.notifications);
 
     // Configure delays
     configureDelays({
@@ -80,7 +92,15 @@ export class ClawSocial {
     log.info('ClawSocial initialized', {
       headless: this.config.browser.headless,
       sessionDir: this.config.session.dir,
+      notificationsEnabled: this.config.notifications.enabled,
     });
+  }
+
+  /**
+   * Get the notifier instance
+   */
+  get notifier(): Notifier {
+    return this._notifier;
   }
 
   /**
@@ -261,6 +281,9 @@ export * from './types/index.js';
 export { log } from './utils/logger.js';
 export { RateLimiter, DEFAULT_RATE_LIMITS } from './utils/rate-limiter.js';
 export { configureDelays, humanDelay, sleep } from './utils/delays.js';
+
+// Export services
+export { Notifier, initNotifier, getNotifier } from './services/notifier.js';
 
 // Export platform handlers for direct use
 export { InstagramHandler } from './platforms/instagram.js';

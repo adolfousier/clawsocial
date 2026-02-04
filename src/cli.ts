@@ -608,5 +608,111 @@ linkedin
     }
   });
 
+// ============================================================================
+// Notification commands
+// ============================================================================
+
+const notify = program.command('notify').description('Manage notifications');
+
+notify
+  .command('status')
+  .description('Show notification configuration status')
+  .action(async () => {
+    try {
+      const claw = new ClawSocial({ browser: { headless: true } });
+      const notifier = claw.notifier;
+      
+      console.log('\n📬 Notification Status\n');
+      console.log(`Enabled: ${notifier.isEnabled() ? '✅ Yes' : '❌ No'}`);
+      
+      const channels = notifier.getChannels();
+      console.log(`\nConfigured Channels:`);
+      if (channels.length === 0) {
+        console.log('  (none)');
+      } else {
+        channels.forEach(ch => console.log(`  • ${ch}`));
+      }
+      
+      console.log(`\nEvent Notifications:`);
+      console.log(`  • action:complete    ${notifier.isEventEnabled('action:complete') ? '✅' : '❌'}`);
+      console.log(`  • action:error       ${notifier.isEventEnabled('action:error') ? '✅' : '❌'}`);
+      console.log(`  • session:login      ${notifier.isEventEnabled('session:login') ? '✅' : '❌'}`);
+      console.log(`  • ratelimit:exceeded ${notifier.isEventEnabled('ratelimit:exceeded') ? '✅' : '❌'}`);
+      
+      console.log(`\nEnvironment Variables:`);
+      console.log(`  NOTIFY_ENABLED=${process.env.NOTIFY_ENABLED || '(not set)'}`);
+      console.log(`  NOTIFY_TELEGRAM_BOT_TOKEN=${process.env.NOTIFY_TELEGRAM_BOT_TOKEN ? '***configured***' : '(not set)'}`);
+      console.log(`  NOTIFY_TELEGRAM_CHAT_ID=${process.env.NOTIFY_TELEGRAM_CHAT_ID || '(not set)'}`);
+      console.log(`  NOTIFY_DISCORD_WEBHOOK=${process.env.NOTIFY_DISCORD_WEBHOOK ? '***configured***' : '(not set)'}`);
+      console.log(`  NOTIFY_WEBHOOK_URL=${process.env.NOTIFY_WEBHOOK_URL || '(not set)'}`);
+      console.log();
+    } catch (error) {
+      console.error('Error:', error);
+      process.exit(1);
+    }
+  });
+
+notify
+  .command('test [channel]')
+  .description('Send a test notification (telegram, discord, webhook, or all)')
+  .action(async (channel?: string) => {
+    try {
+      const claw = new ClawSocial({ browser: { headless: true } });
+      const notifier = claw.notifier;
+      
+      if (!notifier.isEnabled()) {
+        console.log('❌ Notifications are disabled. Set NOTIFY_ENABLED=true in .env');
+        process.exit(1);
+      }
+      
+      console.log(`\n🧪 Sending test notification${channel ? ` to ${channel}` : ' to all channels'}...\n`);
+      
+      const success = await notifier.sendTest(channel as any);
+      
+      if (success) {
+        console.log('✅ Test notification sent successfully');
+      } else {
+        console.log('❌ Failed to send test notification');
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      process.exit(1);
+    }
+  });
+
+notify
+  .command('send <message>')
+  .description('Send a custom notification message')
+  .option('-c, --channel <channel>', 'Send to specific channel (telegram, discord, webhook)')
+  .action(async (message: string, options: { channel?: string }) => {
+    try {
+      const claw = new ClawSocial({ browser: { headless: true } });
+      const notifier = claw.notifier;
+      
+      if (!notifier.isEnabled()) {
+        console.log('❌ Notifications are disabled. Set NOTIFY_ENABLED=true in .env');
+        process.exit(1);
+      }
+      
+      let success: boolean;
+      if (options.channel) {
+        success = await notifier.send(options.channel as any, message);
+      } else {
+        success = await notifier.broadcast(message);
+      }
+      
+      if (success) {
+        console.log('✅ Notification sent');
+      } else {
+        console.log('❌ Failed to send notification');
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      process.exit(1);
+    }
+  });
+
 // Parse arguments
 program.parse();

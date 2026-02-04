@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import type { ServerConfig, BrowserConfig, RateLimitConfig, DelayConfig, SessionConfig, LoggingConfig } from '../types/index.js';
+import type { ServerConfig, BrowserConfig, RateLimitConfig, DelayConfig, SessionConfig, LoggingConfig, NotificationConfig } from '../types/index.js';
 
 interface ResolvedConfig {
   server: ServerConfig;
@@ -9,6 +9,7 @@ interface ResolvedConfig {
   delays: DelayConfig;
   session: SessionConfig;
   logging: LoggingConfig;
+  notifications: NotificationConfig;
 }
 
 // Load environment variables
@@ -89,6 +90,38 @@ export function loadConfig(): ResolvedConfig {
     logging: {
       level: getEnvString('LOG_LEVEL', 'info') as 'debug' | 'info' | 'warn' | 'error',
       file: process.env.LOG_FILE,
+    },
+    notifications: {
+      enabled: getEnvBoolean('NOTIFY_ENABLED', false),
+      channels: {
+        telegram: process.env.NOTIFY_TELEGRAM_BOT_TOKEN && process.env.NOTIFY_TELEGRAM_CHAT_ID
+          ? {
+              botToken: process.env.NOTIFY_TELEGRAM_BOT_TOKEN,
+              chatId: process.env.NOTIFY_TELEGRAM_CHAT_ID,
+            }
+          : undefined,
+        discord: process.env.NOTIFY_DISCORD_WEBHOOK
+          ? {
+              webhookUrl: process.env.NOTIFY_DISCORD_WEBHOOK,
+            }
+          : undefined,
+        webhook: process.env.NOTIFY_WEBHOOK_URL
+          ? {
+              url: process.env.NOTIFY_WEBHOOK_URL,
+              method: (process.env.NOTIFY_WEBHOOK_METHOD as 'POST' | 'PUT') || 'POST',
+              headers: process.env.NOTIFY_WEBHOOK_HEADERS
+                ? JSON.parse(process.env.NOTIFY_WEBHOOK_HEADERS)
+                : undefined,
+            }
+          : undefined,
+      },
+      events: {
+        'action:complete': getEnvBoolean('NOTIFY_ON_COMPLETE', true),
+        'action:error': getEnvBoolean('NOTIFY_ON_ERROR', true),
+        'session:login': getEnvBoolean('NOTIFY_ON_LOGIN', false),
+        'ratelimit:exceeded': getEnvBoolean('NOTIFY_ON_RATELIMIT', true),
+      },
+      brandFooter: getEnvString('NOTIFY_BRAND_FOOTER', '*ClawSocial Automation*'),
     },
   };
 }

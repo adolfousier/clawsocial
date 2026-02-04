@@ -636,7 +636,7 @@ export class LinkedInHandler extends BasePlatformHandler {
           await this.recordAction('follow');
           
           log.info('Successfully sent LinkedIn connection request (via More dropdown)');
-          return this.createResult('connect', payload.profileUrl, startTime, status);
+          return this.createResult('connect', payload.profileUrl, startTime, status, { method: 'more_dropdown' });
         } else {
           // Close dropdown and continue to other checks
           await page.keyboard.press('Escape');
@@ -700,7 +700,7 @@ export class LinkedInHandler extends BasePlatformHandler {
         await this.recordAction('follow');
         
         log.info('Successfully sent LinkedIn connection request');
-        return this.createResult('connect', payload.profileUrl, startTime, status);
+        return this.createResult('connect', payload.profileUrl, startTime, status, { method: 'direct' });
       } else if (hasFollowButton && mainFollowButton) {
         // Fallback to Follow for profiles with Follow-first mode - click the actual button
         log.info('No Connect button, falling back to Follow');

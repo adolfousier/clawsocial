@@ -4,7 +4,7 @@
 ![Playwright](https://img.shields.io/badge/Playwright-1.48+-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
 
 
-# 🐾 ClawSocial
+# 🦀 ClawSocial
 
 **Production-ready social media automation with human-like behavior simulation**
 
@@ -85,6 +85,7 @@
 | **REST API** | Full HTTP API on port 3847 |
 | **WebSocket** | Real-time bidirectional communication on port 3848 |
 | **Programmatic** | TypeScript/JavaScript SDK |
+| **Notifications** | Telegram, Discord, or webhook notifications on action completion |
 
 ---
 
@@ -208,7 +209,7 @@ npm start
 
 ### ⚠️ Important Notice
 
-> **This software is for educational and experimental purposes only.**
+> **This software is for educational and experimental purposes only. EXPECT TO BREAK OR BE LIMITED IF NOT FOLLOWING AUTOMATION_RULES.md**
 > 
 > Read **[AUTOMATION_RULES.md](./AUTOMATION_RULES.md)** before using.
 > 
@@ -499,6 +500,51 @@ Configurable via environment or code. Defaults:
 | LinkedIn | Comment | 30/day | `LI_RATE_COMMENT` |
 | LinkedIn | Connect | 15/day | `LI_RATE_CONNECT` |
 | LinkedIn | Message | 40/day | `LI_RATE_MESSAGE` |
+
+### Notifications
+
+ClawSocial can send notifications via Telegram, Discord, or custom webhooks when actions complete or fail.
+
+#### Notification Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `NOTIFY_ENABLED` | false | Enable notifications |
+| `NOTIFY_TELEGRAM_BOT_TOKEN` | - | Telegram bot token |
+| `NOTIFY_TELEGRAM_CHAT_ID` | - | Telegram chat ID to send to |
+| `NOTIFY_DISCORD_WEBHOOK` | - | Discord webhook URL |
+| `NOTIFY_WEBHOOK_URL` | - | Custom webhook URL |
+| `NOTIFY_WEBHOOK_METHOD` | POST | Webhook HTTP method |
+| `NOTIFY_WEBHOOK_HEADERS` | - | JSON headers for webhook |
+| `NOTIFY_BRAND_FOOTER` | *ClawSocial Automation* | Footer text for notifications |
+| `NOTIFY_ON_COMPLETE` | true | Notify on action success |
+| `NOTIFY_ON_ERROR` | true | Notify on action failure |
+| `NOTIFY_ON_LOGIN` | false | Notify on login events |
+| `NOTIFY_ON_RATELIMIT` | true | Notify on rate limit exceeded |
+
+#### Example .env for Telegram Notifications
+
+```bash
+NOTIFY_ENABLED=true
+NOTIFY_TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+NOTIFY_TELEGRAM_CHAT_ID=7711740248
+NOTIFY_BRAND_FOOTER="*ClawSocial LinkedIn Automation*"
+```
+
+#### Notification CLI Commands
+
+```bash
+# Check notification status
+clawsocial notify status
+
+# Send test notification
+clawsocial notify test
+clawsocial notify test telegram
+
+# Send custom message
+clawsocial notify send "Hello from ClawSocial!"
+clawsocial notify send "Testing" --channel telegram
+```
 
 ---
 
