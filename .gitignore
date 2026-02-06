@@ -59,6 +59,7 @@ scripts/debug-*.ts
 # Local data (user-specific)
 db/
 scraped/
+src/scraped/
 
 # Python scripts (development helpers)
 scripts/*.py
