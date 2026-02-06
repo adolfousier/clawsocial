@@ -23,6 +23,7 @@
 - [Architecture](#-architecture)
 - [Workflow](#-workflow)
   - [Human Simulation](#human-simulation)
+  - [Automation Best Practices](#automation-best-practices)
   - [Rate Limiting](#rate-limiting)
 - [Security](#-security)
 - [Installation](#-installation)
@@ -150,6 +151,33 @@ ClawSocial automatically simulates human behavior for every action:
 2. **Navigate**: Goes to target with natural page load timing
 3. **Think**: Pauses 2-5s (simulates reading/deciding)
 4. **Action**: Performs action with natural typing speed (30-100ms/char)
+
+### Automation Best Practices
+
+Follow this research-first workflow to avoid rate limits and bans:
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Research   │ ──▶ │   Store     │ ──▶ │   Spread    │ ──▶ │   Repeat    │
+│  (scrape/   │     │  Results    │     │  Actions    │     │   When      │
+│   search)   │     │  (JSON/DB)  │     │  Over Time  │     │  Needed     │
+└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+```
+
+1. **Research First**: Scrape or search to build a queue of targets before engaging
+2. **Store Results**: Save to JSON/database — never scrape and act in the same session
+3. **Spread Actions**: Distribute engagement across multiple cron jobs throughout the day
+4. **Repeat When Needed**: Re-run research periodically to refresh your queue
+
+#### Platform-Specific Guidelines
+
+| Platform | Scraping | Notes |
+|----------|----------|-------|
+| **LinkedIn** | ⚠️ Very strict | Search keywords → store HTML → extract results → then engage. Small batches only. Direct profile URLs are safer than search scraping. |
+| **Instagram** | ⚠️ Careful | Scrape followers or hashtags slowly in small batches (5-10 per session). Wait hours between scrape sessions. |
+| **Twitter/X** | ✅ Via bird CLI | Use `bird search` for research. Less restrictive but still pace yourself. |
+
+> ⚠️ **Golden Rule:** Never scrape and engage in the same session. Research in one job, engage in separate jobs spread over hours.
 
 ### Rate Limiting
 
