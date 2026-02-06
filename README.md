@@ -380,7 +380,24 @@ npm run cli -- notify status                    # Check notification config
 npm run cli -- notify test                      # Send test notification
 npm run cli -- notify test telegram             # Test specific channel
 npm run cli -- notify send "Your message"       # Send custom message
+
+# Agent-friendly: Send formatted notification with context
+npm run cli -- notify report twitter like https://twitter.com/user/status/123 \
+  --context='{"author":"@username","preview":"Tweet text here","language":"en"}'
 ```
+
+#### Global CLI Flags
+
+| Flag | Description | Example |
+|------|-------------|---------|
+| `--retries <n>` | Retry failed actions (1-10, default: 3) | `--retries 5` |
+| `--context '<json>'` | Pass JSON context to notifications | `--context='{"author":"@user"}'` |
+
+The `--context` flag accepts JSON with these optional fields:
+- `author` — Username/handle of content author
+- `preview` — First ~100 chars of content
+- `language` — Content language (en/es/pt)
+- `behaviors` — Actions taken (e.g., "Home feed viewed, search performed")
 
 ### REST API Examples
 
@@ -568,6 +585,7 @@ ClawSocial can send notifications via Telegram, Discord, or custom webhooks when
 | `NOTIFY_ON_ERROR` | true | Notify on action failure |
 | `NOTIFY_ON_LOGIN` | false | Notify on login events |
 | `NOTIFY_ON_RATELIMIT` | true | Notify on rate limit exceeded |
+| `CLAWSOCIAL_SILENT` | - | Set to `1` to suppress auto-notifications (for combined reports) |
 
 #### Example .env for Telegram Notifications
 
