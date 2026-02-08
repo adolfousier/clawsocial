@@ -174,7 +174,7 @@ Follow this research-first workflow to avoid rate limits and bans:
 |----------|----------|-------|
 | **LinkedIn** | ⚠️ Very strict | Search keywords → store HTML → extract results → then engage. Small batches only. Direct profile URLs are safer than search scraping. |
 | **Instagram** | ⚠️ Careful | Scrape followers or hashtags slowly in small batches (5-10 per session). Wait hours between scrape sessions. |
-| **Twitter/X** | ✅ Via bird CLI | Use `bird search` for research. Less restrictive but still pace yourself. |
+| **Twitter/X** | ✅ Built-in GraphQL | Use `x search` for research. Less restrictive but still pace yourself. |
 
 > ⚠️ **Golden Rule:** Never scrape and engage in the same session. Research in one job, engage in separate jobs spread over hours.
 
@@ -271,7 +271,7 @@ npm start
 > |----------|--------|
 > | Instagram | 🟡 Production - use responsibly |
 > | LinkedIn | 🟡 Production - use responsibly |
-> | Twitter/X | 🟡 Production - use responsibly (likes, follows, replies via Playwright; search/post via [`bird`](https://github.com/adolfousier/bird) CLI) |
+> | Twitter/X | 🟡 Production - use responsibly (likes, follows, replies via Playwright; search/read via built-in GraphQL client) |
 
 ### 🤖 AI Agent Instructions
 
@@ -302,10 +302,19 @@ npm run cli -- linkedin connect <profile-url>   # Works for 3rd degree too
 npm run cli -- linkedin search <query>          # Search posts/articles
 npm run cli -- linkedin engage --query=<query>  # Full engagement session
 
-# Twitter
-npm run cli -- twitter like <tweet-url>
-npm run cli -- twitter tweet "Your tweet"
-npm run cli -- twitter follow <username>
+# Twitter/X - Write (Playwright)
+npm run cli -- x like <tweet-url>
+npm run cli -- x tweet "Your tweet"
+npm run cli -- x follow <username>
+npm run cli -- x reply <tweet-url> "Your reply"
+
+# Twitter/X - Read (GraphQL, no browser needed)
+npm run cli -- x search "query" -n 10           # Search tweets
+npm run cli -- x home -n 5                      # Home timeline
+npm run cli -- x mentions -n 5                  # Your mentions
+npm run cli -- x whoami                         # Show authenticated account
+npm run cli -- x read <tweet-url>               # Read a specific tweet
+npm run cli -- x search "query" --json          # JSON output for automation
 ```
 
 #### Required Environment Variables
@@ -319,7 +328,11 @@ INSTAGRAM_PASSWORD="your_password"
 LINKEDIN_EMAIL=your_email
 LINKEDIN_PASSWORD="your_password"
 
-# Twitter (optional - or use bird CLI with cookies)
+# Twitter/X - GraphQL API (cookie auth for search/read)
+AUTH_TOKEN=your_auth_token
+CT0=your_ct0_token
+
+# Twitter/X - Playwright (optional, for like/follow/reply)
 TWITTER_USERNAME=your_username
 TWITTER_PASSWORD="your_password"
 ```

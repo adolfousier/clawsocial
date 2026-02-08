@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.40] - 2026-02-08
+
+### Added
+- **Built-in X/Twitter GraphQL client**: Vendored bird CLI's core GraphQL client into ClawSocial. Single tool, full ownership, zero external dependency.
+  - `src/graphql/client.ts` — `XGraphQLClient` class with search, home timeline, mentions, tweet detail, current user
+  - `src/graphql/types.ts` — Tweet, XUser, SearchResult interfaces
+  - `src/graphql/constants.ts` — API base URL, query IDs, tweet ID extraction
+  - `src/graphql/features.ts` — GraphQL feature flag builders
+  - `src/graphql/utils.ts` — Tweet parsing, cursor extraction, media/text extraction
+  - `src/graphql/query-ids.json` + `features.json` — Static query parameters
+- **5 new CLI commands**: `x search`, `x home`, `x mentions`, `x whoami`, `x read`
+  - `clawsocial x search "query" -n 10` — Search tweets
+  - `clawsocial x home -n 8` — Home timeline
+  - `clawsocial x mentions -n 5` — Recent mentions
+  - `clawsocial x whoami` — Current authenticated user
+  - `clawsocial x read <url>` — Read specific tweet detail
+
+### Changed
+- **README updated**: Replaced bird CLI references with built-in GraphQL commands. Added X GraphQL section to Quick Commands.
+- **Auth via env vars**: Uses `AUTH_TOKEN` + `CT0` from `.env` file (same cookies as bird)
+
+### Removed
+- **bird CLI dependency eliminated**: All X read operations (search, home, mentions, read) now use built-in GraphQL. Playwright still used for write operations (like, reply, follow).
+
 ## [0.0.39] - 2026-02-08
 
 ### Fixed

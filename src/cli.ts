@@ -651,6 +651,112 @@ twitter
 // X DM removed - encrypted DMs require passcode that can't be automated
 
 // ============================================================================
+// X GraphQL Read Commands (replaces bird CLI dependency)
+// ============================================================================
+
+twitter
+  .command('search <query>')
+  .description('Search tweets via GraphQL API (cookie auth)')
+  .option('-n, --count <number>', 'Number of tweets', '20')
+  .option('--json', 'Output raw JSON')
+  .action(async (query: string, options: { count?: string; json?: boolean }) => {
+    const { createClientFromEnv } = await import('./graphql/index.js');
+    try {
+      const client = createClientFromEnv();
+      const result = await client.search(query, parseInt(options.count || '20', 10));
+      if (!result.success) { console.error('Error:', result.error); process.exit(1); }
+      if (options.json) { console.log(JSON.stringify(result.tweets, null, 2)); return; }
+      if (result.tweets.length === 0) { console.log('No tweets found.'); return; }
+      for (const tweet of result.tweets) {
+        console.log(`\n@${tweet.author.username} (${tweet.author.name})`);
+        console.log(tweet.text);
+        console.log(`❤️ ${tweet.likeCount ?? 0}  🔁 ${tweet.retweetCount ?? 0}  💬 ${tweet.replyCount ?? 0}`);
+        console.log(`https://x.com/${tweet.author.username}/status/${tweet.id}`);
+        console.log('---');
+      }
+      console.log(`\n${result.tweets.length} tweets found.`);
+    } catch (e: any) { console.error('Error:', e.message); process.exit(1); }
+  });
+
+twitter
+  .command('home')
+  .description('Get home timeline via GraphQL API')
+  .option('-n, --count <number>', 'Number of tweets', '8')
+  .option('--json', 'Output raw JSON')
+  .action(async (options: { count?: string; json?: boolean }) => {
+    const { createClientFromEnv } = await import('./graphql/index.js');
+    try {
+      const client = createClientFromEnv();
+      const result = await client.getHomeTimeline(parseInt(options.count || '8', 10));
+      if (!result.success) { console.error('Error:', result.error); process.exit(1); }
+      if (options.json) { console.log(JSON.stringify(result.tweets, null, 2)); return; }
+      for (const tweet of result.tweets) {
+        console.log(`\n@${tweet.author.username} (${tweet.author.name})`);
+        console.log(tweet.text);
+        console.log(`❤️ ${tweet.likeCount ?? 0}  🔁 ${tweet.retweetCount ?? 0}  💬 ${tweet.replyCount ?? 0}`);
+        console.log(`https://x.com/${tweet.author.username}/status/${tweet.id}`);
+        console.log('---');
+      }
+    } catch (e: any) { console.error('Error:', e.message); process.exit(1); }
+  });
+
+twitter
+  .command('mentions')
+  .description('Get mentions for authenticated user')
+  .option('-n, --count <number>', 'Number of tweets', '5')
+  .option('--json', 'Output raw JSON')
+  .action(async (options: { count?: string; json?: boolean }) => {
+    const { createClientFromEnv } = await import('./graphql/index.js');
+    try {
+      const client = createClientFromEnv();
+      const result = await client.getMentions(parseInt(options.count || '5', 10));
+      if (!result.success) { console.error('Error:', result.error); process.exit(1); }
+      if (options.json) { console.log(JSON.stringify(result.tweets, null, 2)); return; }
+      if (result.tweets.length === 0) { console.log('No mentions found.'); return; }
+      for (const tweet of result.tweets) {
+        console.log(`\n@${tweet.author.username}: ${tweet.text}`);
+        console.log(`https://x.com/${tweet.author.username}/status/${tweet.id}`);
+        console.log('---');
+      }
+    } catch (e: any) { console.error('Error:', e.message); process.exit(1); }
+  });
+
+twitter
+  .command('whoami')
+  .description('Show authenticated X account')
+  .action(async () => {
+    const { createClientFromEnv } = await import('./graphql/index.js');
+    try {
+      const client = createClientFromEnv();
+      const result = await client.getCurrentUser();
+      if (!result.success) { console.error('Error:', result.error); process.exit(1); }
+      console.log(`@${result.user!.username} (${result.user!.name}) [id: ${result.user!.id}]`);
+    } catch (e: any) { console.error('Error:', e.message); process.exit(1); }
+  });
+
+twitter
+  .command('read <url>')
+  .description('Read a specific tweet by URL or ID')
+  .option('--json', 'Output raw JSON')
+  .action(async (url: string, options: { json?: boolean }) => {
+    const { createClientFromEnv, extractTweetId } = await import('./graphql/index.js');
+    try {
+      const client = createClientFromEnv();
+      const tweetId = extractTweetId(url);
+      const result = await client.getTweetDetail(tweetId);
+      if (!result.success) { console.error('Error:', result.error); process.exit(1); }
+      if (options.json) { console.log(JSON.stringify(result.tweet, null, 2)); return; }
+      const t = result.tweet!;
+      console.log(`@${t.author.username} (${t.author.name})`);
+      console.log(t.text);
+      console.log(`❤️ ${t.likeCount ?? 0}  🔁 ${t.retweetCount ?? 0}  💬 ${t.replyCount ?? 0}`);
+      if (t.quotedTweet) {
+        console.log(`\n  Quoting @${t.quotedTweet.author.username}: ${t.quotedTweet.text}`);
+      }
+    } catch (e: any) { console.error('Error:', e.message); process.exit(1); }
+  });
+
+// ============================================================================
 // LinkedIn commands
 // ============================================================================
 
