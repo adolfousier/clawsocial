@@ -35,9 +35,9 @@ const SELECTORS = {
   shareButton: '[data-testid="share"]',
   
   // Compose
-  tweetInput: 'div[data-testid="tweetTextarea_0"]',
-  replyInput: 'div[data-testid="tweetTextarea_0"]',
-  tweetButton: 'div[data-testid="tweetButtonInline"]',
+  tweetInput: '[data-testid="tweetTextarea_0"]',
+  replyInput: '[data-testid="tweetTextarea_0"]',
+  tweetButton: '[data-testid="tweetButton"], [data-testid="tweetButtonInline"]',
   composeTweet: 'a[data-testid="SideNav_NewTweet_Button"]',
   
   // Profile
@@ -385,9 +385,10 @@ export class TwitterHandler extends BasePlatformHandler {
       await this.pause();
 
       // Submit reply
-      if (await this.elementExists(SELECTORS.tweetButton)) {
-        await this.clickHuman(SELECTORS.tweetButton);
+      if (!(await this.elementExists(SELECTORS.tweetButton))) {
+        return this.createErrorResult('comment', payload.url, 'Reply submit button not found', startTime, status);
       }
+      await this.clickHuman(SELECTORS.tweetButton);
 
       await this.delay();
       await this.recordAction('comment');
@@ -654,9 +655,10 @@ export class TwitterHandler extends BasePlatformHandler {
       await this.pause();
 
       // Post tweet
-      if (await this.elementExists(SELECTORS.tweetButton)) {
-        await this.clickHuman(SELECTORS.tweetButton);
+      if (!(await this.elementExists(SELECTORS.tweetButton))) {
+        return this.createErrorResult('post', payload.text.substring(0, 50), 'Tweet submit button not found', startTime, status);
       }
+      await this.clickHuman(SELECTORS.tweetButton);
 
       await this.delay();
       await this.recordAction('post');
