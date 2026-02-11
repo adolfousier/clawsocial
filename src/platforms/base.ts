@@ -173,8 +173,8 @@ export abstract class BasePlatformHandler {
     let sanitized = text;
     // Em-dash → comma (matches VOICE.md absolute ban)
     sanitized = sanitized.replace(/\s*—\s*/g, ', ');
-    // En-dash → hyphen
-    sanitized = sanitized.replace(/\s*–\s*/g, '-');
+    // En-dash → comma (humans don't use dashes mid-sentence in casual comments)
+    sanitized = sanitized.replace(/\s*–\s*/g, ', ');
     // Clean up double commas or comma-period
     sanitized = sanitized.replace(/,\s*,/g, ',');
     sanitized = sanitized.replace(/,\s*\./g, '.');
