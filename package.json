@@ -1,6 +1,6 @@
 {
   "name": "socialcrabs",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "description": "Production-ready social media automation platform with human-like behavior simulation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
