@@ -28,6 +28,7 @@ const SELECTORS = {
   // Profile indicators
   profileIcon: 'svg[aria-label="Home"]',
   loggedInNav: 'nav[role="navigation"]',
+  loggedInShared: 'div[role="button"]:has(svg[aria-label="Share"])',
   
   // Post interactions
   likeButton: 'svg[aria-label="Like"], span svg[aria-label="Like"]',
@@ -86,10 +87,12 @@ export class InstagramHandler extends BasePlatformHandler {
       await this.delay();
       
       // Check for logged-in indicators
-      const hasNav = await this.elementExists(SELECTORS.loggedInNav);
+      const hasShared = await this.elementExists(SELECTORS.loggedInShared);
       const hasProfileIcon = await this.elementExists(SELECTORS.profileIcon);
+
+      console.debug('Login check - hasShared:', hasShared, 'hasProfileIcon:', hasProfileIcon);
       
-      return hasNav && hasProfileIcon;
+      return hasShared && hasProfileIcon;
     } catch (error) {
       log.error('Error checking Instagram login status', { error: String(error) });
       return false;

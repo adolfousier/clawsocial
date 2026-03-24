@@ -680,7 +680,7 @@ export class TwitterHandler extends BasePlatformHandler {
       
       // Click the NEW TWEET button in sidebar (not reply, not quote - brand new tweet)
       // This is more reliable than /compose/tweet URL
-      const page = await this.getPage();
+      let page = await this.getPage();
       const newTweetBtn = await page.$(SELECTORS.composeTweet);
       if (newTweetBtn) {
         await newTweetBtn.click();
@@ -700,7 +700,7 @@ export class TwitterHandler extends BasePlatformHandler {
       const sanitizedText = this.sanitizeText(payload.text);
       await this.clickHuman(SELECTORS.tweetInput);
       
-      const page = await this.getPage();
+      page = await this.getPage();
       await page.keyboard.type(sanitizedText, { delay: 50 });
       await this.pause();
 
