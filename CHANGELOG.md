@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.49] - 2026-03-29
+
+### Fixed
+- **Tweet URL capture**: Fixed fallback to navigate to home timeline instead of profile
+- **Reply context bug**: Navigate to home before composing tweet to prevent posting as reply instead of new tweet
+- **Sidebar new tweet button**: Use `SideNav_NewTweet_Button` selector instead of `/compose/tweet` URL
+- **Remove broken fallback**: URL capture now returns empty on failure instead of wrong URL
+- **Twitter page variable**: Fixed `const` redeclaration error (`const` → `let`)
+
+### Added
+- **Auto-generate sessions**: If `sessions/twitter.json` is missing, auto-create from `.env` `AUTH_TOKEN` + `CT0`
+- **Instagram login selector**: Updated to use `div[role="button"]:has(svg[aria-label="Share"])` selector
+
+### Documentation
+- **Twitter/X auth**: Clarified cookie auth requirement and how to get tokens from browser DevTools
+
+### CI/CD
+- **Auto-assign**: GitHub Actions workflow to auto-assign adolfousier to all PRs and issues
+
+
 ## [0.0.45] - 2026-02-11
 
 ### Added
